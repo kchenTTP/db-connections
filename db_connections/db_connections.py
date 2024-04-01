@@ -51,22 +51,8 @@ class PostgresConnection:
             self.commit()
         self.connection.close()
 
-    def create_table(self, table_name: str, schema: dict[str, str], unsafe: bool = False) -> None:
-        if not unsafe:
-            if (
-                table_name == "main"
-                or table_name == "persons"
-                or table_name == "locations"
-                or table_name == "genres"
-            ):
-                pass
-            else:
-                logger.error(
-                    f"Table: {table_name} creation not allowed. Change unsafe parameter to True if intentional"
-                )
-                raise
-
-        if self.check_table_exists(table_name) and not unsafe:
+    def create_table(self, table_name: str, schema: dict[str, str]) -> None:
+        if self.check_table_exists(table_name):
             logger.info(f"Table: {table_name} already exists, skipping creation")
             return
 
@@ -158,22 +144,8 @@ class SQLiteConnection:
             self.commit()
         self.connection.close()
 
-    def create_table(self, table_name: str, schema: dict[str, str], unsafe: bool = False) -> None:
-        if not unsafe:
-            if (
-                table_name == "main"
-                or table_name == "persons"
-                or table_name == "locations"
-                or table_name == "genres"
-            ):
-                pass
-            else:
-                logger.error(
-                    f"Table: {table_name} creation not allowed. Change unsafe parameter to True if intentional"
-                )
-                raise
-
-        if self.check_table_exists(table_name) and not unsafe:
+    def create_table(self, table_name: str, schema: dict[str, str]) -> None:
+        if self.check_table_exists(table_name):
             logger.info(f"Table: {table_name} already exists, skipping creation")
             return
 
