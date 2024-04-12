@@ -60,7 +60,7 @@ class PostgresConnection:
 
         for name, definition in schema.items():
             column_defs.append(f"{name} {definition}")
-        sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({','.join(column_defs)})"
+        sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({','.join(column_defs)});"
 
         try:
             self.execute(sql)
@@ -84,7 +84,7 @@ class PostgresConnection:
         columns = df.columns.tolist()
         # Placeholders for all columns, [:-1] remove trailing comma
         placeholders = ("%s," * len(columns))[:-1]
-        sql = f"INSERT INTO {table_name} ({','.join(columns)}) VALUES ({placeholders})"
+        sql = f"INSERT INTO {table_name} ({','.join(columns)}) VALUES ({placeholders});"
         logger.debug(sql)
 
         data = df.to_dict(orient="records")
@@ -128,10 +128,12 @@ class SQLiteConnection:
         return self._cursor
 
     def check_table_exists(self, table_name: str) -> bool:
-        sql = f"SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = '{table_name}');"
+        sql = (
+            f"SELECT '{table_name}' FROM sqlite_master WHERE type='table' AND name='{table_name}';"
+        )
         try:
             self.cursor.execute(sql)
-            return self.cursor.fetchone()[0] == 1  # type: ignore
+            return self.cursor.fetchone() is not None  # type: ignore
         except Exception as e:
             logger.error(f"Error checking table existence: {e}")
             raise
@@ -153,7 +155,7 @@ class SQLiteConnection:
 
         for name, definition in schema.items():
             column_defs.append(f"{name} {definition}")
-        sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({','.join(column_defs)})"
+        sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({','.join(column_defs)});"
 
         try:
             self.execute(sql)
@@ -177,7 +179,7 @@ class SQLiteConnection:
         columns = df.columns.tolist()
         # Placeholders for all columns, [:-1] remove trailing comma
         placeholders = ("%s," * len(columns))[:-1]
-        sql = f"INSERT INTO {table_name} ({','.join(columns)}) VALUES ({placeholders})"
+        sql = f"INSERT INTO {table_name} ({','.join(columns)}) VALUES ({placeholders});"
         logger.debug(sql)
 
         data = df.to_dict(orient="records")
