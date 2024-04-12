@@ -53,7 +53,7 @@ class PostgresConnection:
 
     def create_table(self, table_name: str, schema: dict[str, str]) -> None:
         if self.check_table_exists(table_name):
-            logger.info(f"Table: {table_name} already exists, skipping creation")
+            logger.info(f"Table: '{table_name}' already exists, skipping creation")
             return
 
         column_defs = []
@@ -65,7 +65,7 @@ class PostgresConnection:
         try:
             self.execute(sql)
             self.commit()
-            logger.info(f"Table: {table_name} created")
+            logger.info(f"Table: '{table_name}' created")
         except Exception as e:
             self.rollback()
             logger.error(f"Error creating table: {e}")
@@ -148,7 +148,7 @@ class SQLiteConnection:
 
     def create_table(self, table_name: str, schema: dict[str, str]) -> None:
         if self.check_table_exists(table_name):
-            logger.info(f"Table: {table_name} already exists, skipping creation")
+            logger.info(f"Table: '{table_name}' already exists, skipping creation")
             return
 
         column_defs = []
@@ -160,7 +160,7 @@ class SQLiteConnection:
         try:
             self.execute(sql)
             self.commit()
-            logger.info(f"Table: {table_name} created")
+            logger.info(f"Table: '{table_name}' created")
         except Exception as e:
             self.rollback()
             logger.error(f"Error creating table: {e}")
