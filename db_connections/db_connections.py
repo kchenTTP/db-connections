@@ -178,7 +178,7 @@ class SQLiteConnection:
     def insert_dataframe(self, table_name: str, df: pd.DataFrame) -> None:
         columns = df.columns.tolist()
         # Placeholders for all columns, [:-1] remove trailing comma
-        placeholders = ("%s," * len(columns))[:-1]
+        placeholders = ("?," * len(columns))[:-1]
         sql = f"INSERT INTO {table_name} ({','.join(columns)}) VALUES ({placeholders});"
         logger.debug(sql)
 
