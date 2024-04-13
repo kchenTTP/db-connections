@@ -11,7 +11,10 @@ logger = _get_logger()
 
 
 class PostgresConnection:
-    def __init__(self, conn_string: str | None) -> None:
+    def __init__(self, conn_string: str | os.PathLike | None) -> None:
+        if isinstance(conn_string, os.PathLike):
+            conn_string = str(conn_string)
+
         self._conn = psycopg2.connect(conn_string)
         self._cursor = self._conn.cursor()
 
