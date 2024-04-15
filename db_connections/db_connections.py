@@ -11,11 +11,23 @@ logger = _get_logger()
 
 
 class PostgresConnection:
-    def __init__(self, conn_string: str | os.PathLike | None) -> None:
-        if isinstance(conn_string, os.PathLike):
-            conn_string = str(conn_string)
+    def __init__(
+        self,
+        db_uri: str | os.PathLike | None,
+        sslmode: Literal["disable", "require", "verify-ca", "verify-full"] = "disable",
+        sslrootcert: str | os.PathLike | None = None,
+    ) -> None:
+        if isinstance(db_uri, os.PathLike):
+            db_uri = str(db_uri)
 
-        self._conn = psycopg2.connect(conn_string)
+        if sslmode == "disable":
+            self._conn = psycopg2.connect(db_uri)
+        else:
+            assert (
+                sslrootcert
+            ), "Parameter: sslrootcert cannot be None when sslmode is not 'disable'"
+            self._conn = psycopg2.connect(db_uri, sslmode=sslmode, sslrootcert=sslrootcert)
+
         self._cursor = self._conn.cursor()
 
     def __enter__(self):
@@ -199,3 +211,18 @@ class SQLiteConnection:
 
     def rollback(self) -> None:
         self.connection.rollback()
+
+
+def db_type(
+    sql_type: Literal["sqlite", "postgresql"] = "sqlite",
+) -> type[SQLiteConnection] | type[PostgresConnection]:
+    match sql_type:
+        case "sqlite":
+            conn_class = SQLiteConnection
+        case "postgresql":
+            conn_class = PostgresConnection
+        case _:
+            raise ValueError(
+                f"Unsupported SQL type: {sql_type}. Please use either 'sqlite' or 'postgresql'."
+            )
+    return conn_class
